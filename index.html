@@ -8,13 +8,18 @@
     padding: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden; /* これで余計なスクロールを防ぎます */
-    background-color: #000; /* 背景色を黒にしておくと違和感が減ります */
+    overflow: hidden;
+    background-color: #000; /* 背景を黒にしておくと違和感が消えます */
   }
-iframe {
+
+  iframe {
     width: 100%;
-    height: 100vh; /* 画面の高さぴったりにする */
-    margin-top: -50px; /* バナーを隠す分だけ上にずらす */
+    /* 画面全体を覆いつつ、少しだけ下にずらすことでバナーを隠し、
+       かつ全体の表示領域を最適化します */
+    height: calc(100vh + 60px); 
+    border: none;
+    display: block;
+    margin-top: -50px; 
   }
 </style>
     <link rel="apple-touch-icon" href="icon.png">  
