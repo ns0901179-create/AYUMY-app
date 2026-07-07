@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AYUMY SyncCal Pro 💜</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- ★ Tailwind CSSの設定 ★ -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontSize: {
+            'cal-day': 'var(--font-size-calendar-day)',
+            'app-title': 'var(--font-size-app-title)',
+            'month-title': 'var(--font-size-month-title)',
+            'weekday': 'var(--font-size-weekday)',
+            'event-title': 'var(--font-size-event-title)',
+            'event-time': 'var(--font-size-event-time)',
+            'event-sub': 'var(--font-size-event-sub)',
+            'section-title': 'var(--font-size-section-title)',
+            'small-btn': 'var(--font-size-small-btn)',
+            'modal-title': 'var(--font-size-modal-title)',
+            'modal-label': 'var(--font-size-modal-label)',
+            'modal-input': 'var(--font-size-modal-input)',
+            'log-date': 'var(--font-size-log-date)',
+            'log-badge': 'var(--font-size-log-badge)',
+            'log-title': 'var(--font-size-log-title)',
+          },
+          spacing: {
+            'btn-icon': 'var(--btn-icon-size)',
+            'btn-fab': 'var(--btn-fab-size)',
+            'btn-nav': 'var(--btn-nav-size)',
+            'btn-flag-py': 'var(--btn-flag-py)',
+            'cell': 'var(--cell-size)',
+            'cell-gap-y': 'var(--cell-gap-y)',
+            'cell-gap-x': 'var(--cell-gap-x)',
+            'header-px': 'var(--header-px)',
+            'header-py': 'var(--header-py)',
+            'calendar-p': 'var(--calendar-padding)',
+            'event-card-p': 'var(--event-card-padding)',
+            'modal-sec-p': 'var(--modal-section-padding)',
+            'main-px': 'var(--main-px)',
+          },
+          colors: {
+            'sunday': 'var(--color-sunday)',
+            'saturday': 'var(--color-saturday)',
+          },
+          borderRadius: {
+            'card': 'var(--radius-card)',
+            'modal': 'var(--radius-modal)',
+            'calendar': 'var(--radius-calendar)',
+            'button': 'var(--radius-button)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --logo-size: 55px;
+      --font-size-calendar-day: 14px;
+      --font-size-app-title: 1.25rem;
+      --font-size-month-title: 1rem;
+      --font-size-weekday: 11px;
+      --font-size-event-title: 15px;
+      --font-size-event-time: 12px;
+      --font-size-event-sub: 11px;
+      --font-size-section-title: 14px;
+      --font-size-holiday-card: 13px;
+      --font-size-small-btn: 12px;
+      --font-size-modal-title: 1rem;
+      --font-size-modal-label: 14px;
+      --font-size-modal-input: 14px;
+      --font-size-log-date: 12px;
+      --font-size-log-badge: 10px;
+      --font-size-log-title: 14px;
+
+      --btn-icon-size: 40px;
+      --btn-fab-size: 64px;
+      --btn-nav-size: 36px;
+      --btn-flag-py: 8px;
+
+      --cell-size: 40px;
+      --cell-gap-y: 10px;
+      --cell-gap-x: 4px;
+
+      --header-px: 20px;
+      --header-py: 12px;
+      --calendar-padding: 16px;
+      --event-card-padding: 16px;
+      --holiday-card-padding: 14px;
+      --modal-section-padding: 16px;
+      --main-px: 16px;
+
+      --color-holiday-text: #f43f5e;
+      --color-holiday-bg: rgba(244, 63, 94, 0.12);
+      --color-holiday-border: rgba(244, 63, 94, 0.35);
+      --color-sunday: #f87171;
+      --color-saturday: #22d3ee;
+      --color-today-start: #a855f7;
+      --color-today-end: #ec4899;
+
+      --radius-card: 16px;
+      --radius-modal: 40px;
+      --radius-calendar: 24px;
+      --radius-button: 12px;
+    }
+
+    .profile-image { width: var(--logo-size); height: var(--logo-size); border-radius: 50%; }
+    .holiday-card {
+      font-size: var(--font-size-holiday-card); padding: var(--holiday-card-padding);
+      background: var(--color-holiday-bg); border: 1px solid var(--color-holiday-border);
+      border-radius: var(--radius-card); color: var(--color-holiday-text); font-weight: 700;
+      letter-spacing: 0.1em; text-align: center; margin-bottom: 4px; flex-shrink: 0; pointer-events: none; user-select: none;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #090514 0%, #150b2b 40%, #2a0c5c 80%, #030107 100%);
+      color: #ffffff; -webkit-tap-highlight-color: transparent; overflow: hidden;
+    }
+    .bg-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
+    .blob { position: absolute; filter: blur(100px); opacity: 0.52; animation: drift 22s infinite alternate ease-in-out; }
+    .blob-1 { top: -10%; left: -10%; width: 380px; height: 380px; background: #8b5cf6; } 
+    .blob-2 { bottom: -10%; right: -10%; width: 480px; height: 480px; background: #ec4899; animation-delay: -10s; } 
+    @keyframes drift { 0% { transform: translate(0, 0) scale(1) rotate(0deg); } 50% { transform: translate(70px, 40px) scale(1.1) rotate(20deg); } 100% { transform: translate(-30px, 70px) scale(0.95) rotate(-15deg); } }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.11); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.22); box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.35);
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.22) !important; border: 1px solid rgba(255, 255, 255, 0.35) !important;
+      color: #ffffff !important; font-weight: 500; color-scheme: dark;
+    }
+    .glass-input:focus {
+      outline: none; border-color: #d8b4fe !important; background: rgba(255, 255, 255, 0.35) !important;
+      box-shadow: 0 0 12px rgba(216, 180, 254, 0.5);
+    }
+    .glass-input::placeholder { color: rgba(255, 255, 255, 0.75) !important; }
+    .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+
+    .date-cell { position: relative; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .date-cell.selected::before {
+      content: ''; position: absolute; inset: -1px; border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.25); border: 1px solid rgba(255, 255, 255, 0.5); z-index: -1;
+    }
+    .date-cell.today {
+      background: linear-gradient(135deg, var(--color-today-start), var(--color-today-end));
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--color-today-start) 60%, transparent); font-weight: bold;
+    }
+    .date-cell:hover { background: rgba(255, 255, 255, 0.2); }
+    
+    .toggle-knob { transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .peer:checked ~ .toggle-bg { background: linear-gradient(135deg, #c084fc, #db2777); border-color: rgba(255, 255, 255, 0.4); }
+    .peer:checked ~ .toggle-bg .toggle-knob { transform: translateX(20px); box-shadow: 0 0 8px rgba(255, 255, 255, 0.9); }
+    #calendarSlider { transition: transform 0s; will-change: transform; }
+    .slider-transition { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important; }
+
+    ::-webkit-scrollbar { display: none; }
+    .modal-enter { transform: translateY(100%); opacity: 0; }
+    .modal-active { transform: translateY(0); opacity: 1; transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    .border-common { border-left-color: #fbbf24 !important; } 
+    .border-mama { border-left-color: #e879f9 !important; } 
+    .border-papa { border-left-color: #34d399 !important; } 
+  </style>
+  
+  <link rel="apple-touch-icon" href="https://drive.google.com/file/d/1nAyo6t4CjcjMXxBePa1a7JbUdZFywDP8/view?usp=sharing">
+<link rel="manifest" href="https://(作成したmanifest.jsonのURL)">
+<style>
+  body {
+    padding-top: env(safe-area-inset-top);
+    height: 100vh;
+  }
+</style>  
+</head>
+<body class="h-screen flex flex-col relative select-none">
+
+  <div class="bg-animation"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+  <div class="relative z-10 flex flex-col h-full w-full">
+    
+    <header class="px-header-px py-header-py flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="profile-image glass flex items-center justify-center overflow-hidden border border-white/20 shadow-lg">
+          <i id="defaultHeartIcon" class="fa-solid fa-heart text-fuchsia-400 text-lg drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]"></i>
+          <img id="profileImage" class="w-full h-full object-cover hidden" alt="プロフ" onerror="handleProfileImageError()">
+        </div>
+        <h1 class="text-app-title font-bold tracking-widest text-shadow">AYUMY SyncCal <span class="text-fuchsia-400 text-sm">💜</span></h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openLogsModal()" class="w-btn-icon h-btn-icon rounded-full glass flex items-center justify-center hover:bg-white/10 active:scale-90 transition-all relative">
+          <i class="fa-solid fa-bell text-white drop-shadow-md"></i>
+          <span id="logBadge" class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-fuchsia-400 rounded-full hidden animate-pulse"></span>
+        </button>
+        <button onclick="loadEvents()" class="w-btn-icon h-btn-icon rounded-full glass flex items-center justify-center hover:bg-white/10 active:scale-90 transition-all">
+          <i class="fa-solid fa-rotate text-white drop-shadow-md"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-hidden px-main-px flex flex-col gap-4">
+      
+      <div id="swipeArea" class="glass rounded-calendar p-calendar-p shadow-2xl shrink-0 border-t border-l border-white/20 relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <button onclick="changeMonth(-1)" class="w-btn-nav h-btn-nav rounded-button flex items-center justify-center hover:bg-white/10"><i class="fa-solid fa-chevron-left text-white drop-shadow-md"></i></button>
+          <h2 id="monthTitle" class="text-month-title font-bold text-shadow tracking-widest">2026年 7月</h2>
+          <button onclick="changeMonth(1)" class="w-btn-nav h-btn-nav rounded-button flex items-center justify-center hover:bg-white/10"><i class="fa-solid fa-chevron-right text-white drop-shadow-md"></i></button>
+        </div>
+        
+        <div class="grid grid-cols-7 text-center text-weekday font-bold text-white/50 mb-2 tracking-widest">
+          <div class="text-sunday">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="text-saturday">土</div>
+        </div>
+        
+        <div id="calendarSliderContainer" class="overflow-hidden relative w-full">
+          <div id="calendarSlider" class="grid grid-cols-7 gap-y-cell-gap-y gap-x-cell-gap-x px-1 pt-1"></div>
+        </div>
+      </div>
+
+      <div class="flex-1 flex flex-col overflow-hidden pb-4">
+        <div class="flex items-center justify-between mb-2 px-1 shrink-0">
+          <h3 id="selectedDateTitle" class="text-section-title font-bold tracking-wider text-white/80 uppercase">7月6日 (月) の予定</h3>
+          <div class="flex items-center gap-2">
+            <button onclick="openLogsModal()" class="text-small-btn font-bold tracking-widest px-3 py-1 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fuchsia-300">お知らせ履歴 💜</button>
+            <button onclick="goToday()" class="text-small-btn font-bold tracking-widest px-3 py-1 rounded-full border border-white/20 bg-white/5 hover:bg-white/10">今日</button>
+          </div>
+        </div>
+        <div id="eventList" class="space-y-3 flex-1 overflow-y-auto pr-1 pb-28"></div>
+      </div>
+    </main>
+
+    <button onclick="openModal()" class="fixed bottom-6 right-6 w-btn-fab h-btn-fab rounded-full glass backdrop-blur-xl bg-white/10 border border-white/30 shadow-[0_4px_30px_rgba(168,85,247,0.4)] flex items-center justify-center text-white text-2xl z-20 hover:scale-105 active:scale-95 transition-all">
+      <i class="fa-solid fa-plus drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]"></i>
+    </button>
+  </div>
+
+  <!-- お知らせ履歴モーダル -->
+  <div id="logsModal" class="fixed inset-0 z-40 hidden flex-col justify-end modal-enter">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="closeLogsModal()"></div>
+    <div class="relative w-full h-[92vh] glass rounded-t-modal border-t border-white/30 flex flex-col shadow-[0_-10px_45px_rgba(0,0,0,0.7)] bg-[#0c0919]/96">
+      <div class="flex items-center justify-between px-6 py-5 shrink-0 border-b border-white/10">
+        <span class="text-white/40 text-xs font-bold font-sans">HISTORY</span>
+        <h3 class="text-modal-title font-bold text-fuchsia-300 tracking-wider text-shadow">お知らせ履歴 💜</h3>
+        <button onclick="closeLogsModal()" class="text-white hover:text-fuchsia-300 text-sm font-bold transition-colors">閉じる</button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-6 py-5 space-y-4 pb-20">
+        <div id="logList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 予定登録・編集モーダル -->
+  <div id="eventModal" class="fixed inset-0 z-50 hidden flex-col justify-end modal-enter">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="requestCloseModal()"></div>
+    <div class="relative w-full h-[92vh] glass rounded-t-modal border-t border-white/25 flex flex-col shadow-[0_-10px_45px_rgba(0,0,0,0.6)] bg-[#0d0a1c]/95">
+      
+      <div class="flex items-center justify-between px-6 py-5 shrink-0 border-b border-white/10">
+        <button onclick="requestCloseModal()" class="text-white/60 hover:text-white text-sm font-bold tracking-wider transition-colors">閉じる</button>
+        <h3 id="modalTitle" class="text-modal-title font-bold text-white tracking-wider text-shadow">予定登録 💜</h3>
+        <button id="saveEventBtn" onclick="saveEventForm()" class="text-fuchsia-300 hover:text-fuchsia-200 text-sm font-bold tracking-wider transition-colors">保存</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+        <input type="hidden" id="eventId">
+        
+        <div class="form-section">
+          <input type="text" id="eventTitle" oninput="markDirty()" placeholder="予定のタイトルを入力" class="w-full bg-transparent border-b-2 border-white/20 py-3 text-lg font-bold text-white placeholder-white/40 outline-none focus:border-fuchsia-400 transition-colors disabled:opacity-80">
+        </div>
+
+        <div class="glass rounded-card p-modal-sec-p space-y-4 form-section">
+          <div class="flex items-center gap-3 mb-2">
+            <i class="fa-solid fa-tag text-white/70 text-sm"></i>
+            <span class="text-modal-label font-bold text-white text-shadow">予定の色分け</span>
+          </div>
+          <div class="flex gap-2" id="flagContainer">
+            <button type="button" onclick="selectFlag('common')" id="flag-common" class="flex-1 py-btn-flag-py rounded-button border border-amber-400/50 bg-amber-400/20 text-amber-300 text-small-btn font-bold transition-all">共通</button>
+            <button type="button" onclick="selectFlag('mama')" id="flag-mama" class="flex-1 py-btn-flag-py rounded-button border border-fuchsia-400/20 bg-transparent text-white/50 text-small-btn font-bold transition-all">歩</button>
+            <button type="button" onclick="selectFlag('papa')" id="flag-papa" class="flex-1 py-btn-flag-py rounded-button border border-emerald-400/20 bg-transparent text-white/50 text-small-btn font-bold transition-all">貴弘</button>
+          </div>
+          <hr class="border-white/10">
+          <div class="flex items-center gap-3 mb-2">
+            <i class="fa-solid fa-user-pen text-white/70 text-sm"></i>
+            <span class="text-modal-label font-bold text-white text-shadow">登録者</span>
+          </div>
+          <div class="flex gap-2" id="authorContainer">
+            <button type="button" onclick="selectAuthor('mama')" id="author-mama" class="flex-1 py-btn-flag-py rounded-button border border-fuchsia-400/50 bg-fuchsia-400/20 text-fuchsia-300 text-small-btn font-bold transition-all">歩</button>
+            <button type="button" onclick="selectAuthor('papa')" id="author-papa" class="flex-1 py-btn-flag-py rounded-button border border-emerald-400/20 bg-transparent text-white/50 text-small-btn font-bold transition-all">貴弘</button>
+          </div>
+        </div>
+
+        <div class="glass rounded-card p-modal-sec-p space-y-4 form-section">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <i class="fa-regular fa-clock text-white/70 text-sm"></i>
+              <span class="text-modal-label font-bold text-white text-shadow">終日</span>
+            </div>
+            <label class="flex items-center cursor-pointer relative" id="allDayLabel">
+              <input type="checkbox" id="eventAllDay" class="sr-only peer" onchange="markDirty()">
+              <div class="toggle-bg w-12 h-7 bg-white/20 border border-white/30 rounded-full transition-all duration-300 relative">
+                <div class="toggle-knob absolute left-0.5 top-0.5 w-6 h-6 bg-white rounded-full transition-transform"></div>
+              </div>
+            </label>
+          </div>
+          <hr class="border-white/10">
+          <div class="flex items-center justify-between">
+            <span class="text-modal-label font-bold text-white/70 pl-7">開始</span>
+            <input type="datetime-local" id="eventStart" onchange="markDirty()" class="bg-transparent text-white font-mono text-modal-input outline-none text-right appearance-none font-medium disabled:opacity-80 disabled:text-white">
+          </div>
+          <hr class="border-white/10">
+          <div class="flex items-center justify-between">
+            <span class="text-modal-label font-bold text-white/70 pl-7">終了</span>
+            <input type="datetime-local" id="eventEnd" onchange="markDirty()" class="bg-transparent text-white font-mono text-modal-input outline-none text-right appearance-none font-medium disabled:opacity-80 disabled:text-white">
+          </div>
+        </div>
+
+        <div class="glass rounded-card p-modal-sec-p space-y-4 form-section">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 w-1/2">
+              <i class="fa-solid fa-arrows-spin text-white/70 text-sm w-5 text-center"></i>
+              <span class="text-modal-label font-bold text-white text-shadow">繰り返し</span>
+            </div>
+            <div class="w-1/2 text-right">
+              <select id="eventRecurrence" onchange="markDirty()" class="bg-transparent text-white text-modal-input outline-none text-right font-medium pr-1 w-full appearance-none disabled:opacity-80">
+                <option value="none" class="bg-[#150b2b]">なし</option>
+                <option value="daily" class="bg-[#150b2b]">毎日</option>
+                <option value="weekly" class="bg-[#150b2b]">毎週</option>
+                <option value="monthly" class="bg-[#150b2b]">毎月</option>
+                <option value="yearly" class="bg-[#150b2b]">毎年</option>
+              </select>
+            </div>
+          </div>
+          <hr class="border-white/10">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 w-1/2">
+              <i class="fa-solid fa-bell text-white/70 text-sm w-5 text-center"></i>
+              <span class="text-modal-label font-bold text-white text-shadow">通知</span>
+            </div>
+            <div class="w-1/2 text-right">
+              <select id="eventAlarm" onchange="markDirty()" class="bg-transparent text-white text-modal-input outline-none text-right font-medium pr-1 w-full appearance-none disabled:opacity-80">
+                <option value="none" class="bg-[#150b2b]">なし</option>
+                <option value="m15" class="bg-[#150b2b]">15分前</option>
+                <option value="m30" class="bg-[#150b2b]">30分前</option>
+                <option value="h1" class="bg-[#150b2b]">1時間前</option>
+                <option value="d1" class="bg-[#150b2b]">1日前</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-input rounded-card p-modal-sec-p space-y-4 shadow-inner form-section">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-location-dot text-white text-sm w-4 text-center"></i>
+            <input type="text" id="eventLocation" oninput="markDirty()" placeholder="場所（任意）" class="flex-1 bg-transparent text-modal-input text-white placeholder-white/70 outline-none font-bold disabled:opacity-80">
+          </div>
+          <hr class="border-white/35">
+          <div class="flex items-start gap-3">
+            <i class="fa-solid fa-align-left text-white text-sm w-4 text-center mt-0.5"></i>
+            <textarea id="eventDescription" rows="2" oninput="markDirty()" placeholder="メモやURLを追加" class="flex-1 bg-transparent text-modal-input text-white placeholder-white/70 outline-none resize-none font-bold disabled:opacity-80"></textarea>
+          </div>
+        </div>
+
+        <!-- ★ ビューモード時のアクションボタン群 -->
+        <div id="viewActionContainer" class="hidden pt-2 pb-10 space-y-3">
+          <button onclick="requestEditConfirm()" class="w-full bg-blue-500/25 border border-blue-500/50 py-3.5 rounded-button text-blue-300 text-sm font-bold tracking-widest active:bg-blue-500/35 transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-pen"></i> 予定を変更する
+          </button>
+          <button onclick="requestCloneConfirm()" class="w-full bg-indigo-500/20 border border-indigo-500/50 py-3.5 rounded-button text-indigo-300 text-sm font-bold tracking-widest active:bg-indigo-500/30 transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-clone"></i> 予定を複製
+          </button>
+          <button onclick="requestDeleteConfirm()" class="w-full bg-rose-500/25 border border-rose-500/50 py-3.5 rounded-button text-rose-300 text-sm font-bold tracking-widest active:bg-rose-500/35 transition-colors flex items-center justify-center gap-2">
+            <i class="fa-regular fa-trash-can"></i> 予定を削除
+          </button>
+        </div>
+        
+        <div class="h-8"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ★ 変更モード移行確認ダイアログ -->
+  <div id="editConfirmModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/65 backdrop-blur-md transition-all duration-300">
+    <div class="glass w-full max-w-sm rounded-[32px] p-6 text-center border border-white/20 bg-[#0f0a1d]/90 flex flex-col gap-4 shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center mx-auto mb-2 text-blue-400">
+        <i class="fa-solid fa-pen text-2xl animate-pulse"></i>
+      </div>
+      <h4 class="text-base font-bold text-white text-shadow tracking-wider">予定の変更</h4>
+      <p class="text-xs text-white/70 leading-relaxed">
+        編集モードに切り替えて、内容を変更しますか？
+      </p>
+      <div class="flex gap-3 mt-2">
+        <button onclick="closeEditConfirm()" class="flex-1 py-3 rounded-button border border-white/20 bg-white/5 text-xs font-bold text-white active:bg-white/10 transition-colors">キャンセル</button>
+        <button onclick="enterEditMode()" class="flex-1 py-3 rounded-button bg-gradient-to-r from-blue-600 to-cyan-600 text-xs font-bold text-white active:scale-95 transition-transform shadow-lg shadow-blue-500/30">編集する</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cloneConfirmModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/65 backdrop-blur-md transition-all duration-300">
+    <div class="glass w-full max-w-sm rounded-[32px] p-6 text-center border border-white/20 bg-[#0f0a1d]/90 flex flex-col gap-4 shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center mx-auto mb-2 text-indigo-400">
+        <i class="fa-solid fa-clone text-2xl animate-pulse"></i>
+      </div>
+      <h4 class="text-base font-bold text-white text-shadow tracking-wider">予定の複製</h4>
+      <p class="text-xs text-white/70 leading-relaxed">この予定を複製して、新しい予定として追加しますか？💜</p>
+      <div class="flex gap-3 mt-2">
+        <button onclick="closeCloneConfirm()" class="flex-1 py-3 rounded-button border border-white/20 bg-white/5 text-xs font-bold text-white active:bg-white/10 transition-colors">キャンセル</button>
+        <button onclick="confirmCloneEvent()" class="flex-1 py-3 rounded-button bg-gradient-to-r from-indigo-600 to-purple-600 text-xs font-bold text-white active:scale-95 transition-transform shadow-lg shadow-indigo-500/30">複製する</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="discardConfirmModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/65 backdrop-blur-md transition-all duration-300">
+    <div class="glass w-full max-w-sm rounded-[32px] p-6 text-center border border-white/20 bg-[#0f0a1d]/90 flex flex-col gap-4 shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center mx-auto mb-2 text-amber-400">
+        <i class="fa-solid fa-triangle-exclamation text-2xl animate-pulse"></i>
+      </div>
+      <h4 class="text-base font-bold text-white text-shadow tracking-wider">保存されていません</h4>
+      <p class="text-xs text-white/70 leading-relaxed">変更内容が保存されていません。<br>入力内容を破棄してもよろしいですか？</p>
+      <div class="flex gap-3 mt-2">
+        <button onclick="closeDiscardConfirm()" class="flex-1 py-3 rounded-button border border-white/20 bg-white/5 text-xs font-bold text-white active:bg-white/10 transition-colors">戻る</button>
+        <button onclick="forceCloseModal()" class="flex-1 py-3 rounded-button bg-gradient-to-r from-amber-600 to-orange-600 text-xs font-bold text-white active:scale-95 transition-transform shadow-lg shadow-amber-500/30">破棄して閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="deleteConfirmModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/65 backdrop-blur-md transition-all duration-300">
+    <div class="glass w-full max-w-sm rounded-[32px] p-6 text-center border border-white/20 bg-[#0f0a1d]/90 flex flex-col gap-4 shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center mx-auto mb-2 text-rose-400">
+        <i class="fa-regular fa-trash-can text-2xl animate-pulse"></i>
+      </div>
+      <h4 class="text-base font-bold text-white text-shadow tracking-wider">予定の完全削除</h4>
+      <p class="text-xs text-white/70 leading-relaxed">この予定をカレンダーから完全に消去します。<br>この操作は取り消せません。よろしいですか？💜</p>
+      <div class="flex gap-3 mt-2">
+        <button onclick="closeDeleteConfirm()" class="flex-1 py-3 rounded-button border border-white/20 bg-white/5 text-xs font-bold text-white active:bg-white/10 transition-colors">キャンセル</button>
+        <button onclick="confirmDeleteEvent()" class="flex-1 py-3 rounded-button bg-gradient-to-r from-rose-600 to-pink-600 text-xs font-bold text-white active:scale-95 transition-transform shadow-lg shadow-rose-500/30">削除する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ローディング -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center backdrop-blur-sm">
+    <div class="relative w-16 h-16 flex items-center justify-center">
+      <div class="absolute inset-0 rounded-full border-t-2 border-r-2 border-fuchsia-400 animate-[spin_1s_linear_infinite]"></div>
+      <i class="fa-solid fa-heart text-fuchsia-400 text-xl animate-pulse"></i>
+    </div>
+  </div>
+
+  <!-- フル幅トースト通知 -->
+  <div id="toast" class="fixed top-0 left-0 right-0 z-[70] glass bg-black/85 border-b border-white/20 text-white text-sm font-semibold px-6 py-4.5 shadow-2xl flex items-center justify-center gap-3 transition-all duration-300 opacity-0 pointer-events-none -translate-y-full backdrop-blur-md w-full shrink-0">
+    <i id="toastIcon" class="fa-solid fa-heart text-fuchsia-400 drop-shadow-[0_0_5px_#e879f9]"></i> <span id="toastMsg" class="tracking-wide">ボラへ！💜</span>
+  </div>
+
+  <script>
+    const isGAS = typeof google !== 'undefined' && google.script;
+    
+    const API = {
+      getEvents: () => {
+        if (isGAS) return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej).getEvents());
+        return new Promise(res => setTimeout(() => {
+          const now = new Date();
+          res({
+            success: true,
+            events: [
+              { id: '1', title: 'テストお伺い予定', start: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0).toISOString(), end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30).toISOString(), isAllDay: false, location: 'リビング', description: '[FLAG:mama]\n[登録者: papa]\n確認をお願いします。' },
+              { id: '2', title: '週末買い出し', start: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2, 10, 0).toISOString(), end: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2, 11, 45).toISOString(), isAllDay: false, location: 'スーパー', description: '[FLAG:common]\n[登録者: mama]\n常備菜の材料' }
+            ],
+            holidays: [ { date: '2026-07-20', title: '海の日' }, { date: '2026-08-11', title: '山の日' } ],
+            logs: [
+              { id: '1', title: '週末買い出し', start: new Date(now.getFullYear(), now.getMonth(), now.getDate()+2).toISOString(), location: 'スーパー', timestamp: new Date(now.getTime() - 25000).toISOString(), action: '追加・更新', author: '歩' },
+              { id: '2', title: 'イタリアンディナー予約', start: new Date(now.getFullYear(), now.getMonth(), now.getDate()+5).toISOString(), location: '駅ビル2F', timestamp: new Date(now.getTime() - 4200000).toISOString(), action: '外部更新', author: '貴弘' }
+            ],
+            profileImage: null 
+          });
+        }, 500));
+      },
+      saveEvent: (data) => {
+        if (isGAS) return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej).saveEvent(data));
+        return new Promise(res => setTimeout(() => res({ success: true, eventId: data.id || 'mock_' + Date.now() }), 600));
+      },
+      deleteEvent: (id) => {
+        if (isGAS) return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej).deleteEvent(id));
+        return new Promise(res => setTimeout(() => res({ success: true }), 600));
+      },
+      cloneEvent: (id, author) => {
+        if (isGAS) return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej).cloneEvent(id, author));
+        return new Promise(res => setTimeout(() => res({ success: true, eventId: 'clone_' + Date.now() }), 600));
+      }
+    };
+
+    let currentMonth = new Date();
+    let selectedDate = new Date();
+    let eventsData = [];
+    let holidaysData = [];
+    let logsData = [];
+    
+    let currentFlag = "common";
+    let currentAuthor = "mama"; 
+    let isDirty = false;
+
+    window.onload = () => {
+      currentMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      const savedAuthor = localStorage.getItem("AYUMY_SyncCal_author");
+      if (savedAuthor) currentAuthor = savedAuthor;
+      loadEvents();
+      setupAllDayToggle();
+      setupDragSwipe(); 
+    };
+
+    function markDirty() { isDirty = true; }
+
+    function selectFlag(flag) {
+      currentFlag = flag; markDirty();
+      const flags = ['common', 'mama', 'papa'];
+      flags.forEach(f => {
+        const btn = document.getElementById('flag-' + f);
+        btn.className = "flex-1 py-btn-flag-py rounded-button text-small-btn font-bold transition-all border bg-transparent text-white/50"; 
+        if (f === 'common') btn.classList.add('border-amber-400/20');
+        if (f === 'mama') btn.classList.add('border-fuchsia-400/20');
+        if (f === 'papa') btn.classList.add('border-emerald-400/20');
+      });
+      const activeBtn = document.getElementById('flag-' + flag);
+      if (flag === 'common') activeBtn.className = "flex-1 py-btn-flag-py rounded-button border border-amber-400/50 bg-amber-400/20 text-amber-300 text-small-btn font-bold transition-all";
+      if (flag === 'mama') activeBtn.className = "flex-1 py-btn-flag-py rounded-button border border-fuchsia-400/50 bg-fuchsia-400/20 text-fuchsia-300 text-small-btn font-bold transition-all";
+      if (flag === 'papa') activeBtn.className = "flex-1 py-btn-flag-py rounded-button border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 text-small-btn font-bold transition-all";
+    }
+
+    function selectAuthor(author) {
+      currentAuthor = author; localStorage.setItem("AYUMY_SyncCal_author", author); markDirty();
+      document.getElementById('author-mama').className = "flex-1 py-btn-flag-py rounded-button text-small-btn font-bold transition-all border border-fuchsia-400/20 bg-transparent text-white/50";
+      document.getElementById('author-papa').className = "flex-1 py-btn-flag-py rounded-button text-small-btn font-bold transition-all border border-emerald-400/20 bg-transparent text-white/50";
+      if (author === 'mama') document.getElementById('author-mama').className = "flex-1 py-btn-flag-py rounded-button border border-fuchsia-400/50 bg-fuchsia-400/20 text-fuchsia-300 text-small-btn font-bold transition-all";
+      if (author === 'papa') document.getElementById('author-papa').className = "flex-1 py-btn-flag-py rounded-button border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 text-small-btn font-bold transition-all";
+    }
+
+    function getDurationText(startStr, endStr) {
+      const diff = (new Date(endStr) - new Date(startStr)) / 60000;
+      if (diff <= 0) return "";
+      const h = Math.floor(diff / 60); const m = diff % 60;
+      if (h > 0 && m > 0) return `${h}時間${m}分`;
+      if (h > 0) return `${h}時間`;
+      return `${m}分`;
+    }
+
+    async function loadEvents() {
+      showLoading(true);
+      try {
+        const res = await API.getEvents();
+        if (res.success) {
+          eventsData = res.events; holidaysData = res.holidays || []; logsData = res.logs || [];
+          if (res.profileImage) {
+            const imgEl = document.getElementById("profileImage");
+            const heartEl = document.getElementById("defaultHeartIcon");
+            imgEl.src = res.profileImage; imgEl.classList.remove("hidden"); heartEl.classList.add("hidden");
+          } else { handleProfileImageError(); }
+          if (logsData.length > 0) document.getElementById("logBadge").classList.remove("hidden");
+          renderCalendar(); renderEventList(); renderLogList();
+          if(!isGAS) showToast("プレビュー起動完了！ボラへ 💜");
+        } else { showToast("イベント取得失敗: " + (res.error || "不明なエラー"), true); }
+      } catch (e) { showToast("通信エラー", true); }
+      showLoading(false);
+    }
+
+    function handleProfileImageError() {
+      document.getElementById("profileImage").classList.add("hidden");
+      document.getElementById("defaultHeartIcon").classList.remove("hidden");
+    }
+
+    function renderCalendar() {
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      document.getElementById("monthTitle").textContent = `${year}年 ${month + 1}月`;
+      const grid = document.getElementById("calendarSlider");
+      grid.innerHTML = "";
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      
+      for (let i = 0; i < firstDay.getDay(); i++) grid.innerHTML += `<div></div>`;
+
+      const holidayDates = new Set(holidaysData.map(h => h.date));
+      const eventDates = new Set(eventsData.map(ev => new Date(ev.start).toDateString()));
+
+      const todayStr = new Date().toDateString();
+      const selectedStr = selectedDate.toDateString();
+
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const cellDate = new Date(year, month, day);
+        const cellDateStr = cellDate.toDateString();
+        const isToday = cellDateStr === todayStr;
+        const isSelected = cellDateStr === selectedStr;
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        
+        const isHoliday = holidayDates.has(dateStr);
+        const hasEvent = eventDates.has(cellDateStr);
+        
+        let textColor = "text-white/95";
+        if (cellDate.getDay() === 0 || isHoliday) textColor = "text-sunday font-medium";
+        if (cellDate.getDay() === 6 && !isHoliday) textColor = "text-saturday font-medium";
+        if (isSelected && !isToday) textColor = "text-white font-bold";
+        if (isToday) textColor = "text-white font-bold";
+
+        const holidayDotColor = isToday ? 'text-white/80' : 'text-sunday';
+
+        const div = document.createElement("div");
+        div.className = `date-cell h-cell w-cell mx-auto flex flex-col items-center justify-center rounded-full cursor-pointer ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''}`;
+        div.onclick = () => { if (!isActualSwiping) selectDate(cellDate); };
+        
+        div.innerHTML = `
+          <span class="text-cal-day ${textColor} drop-shadow-md z-10">${day}</span>
+          ${isHoliday ? `<span class="absolute top-1 text-[7px] ${holidayDotColor} scale-75 z-10 font-bold">●</span>` : ''}
+          ${hasEvent && !isToday ? `<span class="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-cyan-400 z-10 shadow-[0_0_5px_#22d3ee]"></span>` : ''}
+          ${hasEvent && isToday ? `<span class="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-white z-10"></span>` : ''}
+        `;
+        grid.appendChild(div);
+      }
+    }
+
+    function changeMonth(offset) {
+      currentMonth.setMonth(currentMonth.getMonth() + offset);
+      renderCalendar();
+    }
+
+    function selectDate(date) {
+      selectedDate = new Date(date);
+      if (selectedDate.getMonth() !== currentMonth.getMonth() || selectedDate.getFullYear() !== currentMonth.getFullYear()) {
+        currentMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      }
+      renderCalendar(); renderEventList();
+    }
+    function goToday() { selectDate(new Date()); }
+
+    function renderEventList() {
+      const dayStrs = ["日", "月", "火", "水", "木", "金", "土"];
+      document.getElementById("selectedDateTitle").textContent = `${selectedDate.getMonth() + 1}月${selectedDate.getDate()}日 (${dayStrs[selectedDate.getDay()]}) の予定`;
+      const list = document.getElementById("eventList");
+      list.innerHTML = "";
+
+      const dayEvents = eventsData.filter(ev => new Date(ev.start).toDateString() === selectedDate.toDateString())
+                                  .sort((a, b) => new Date(a.start) - new Date(b.start));
+
+      const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,'0')}-${String(selectedDate.getDate()).padStart(2,'0')}`;
+      const holiday = holidaysData.find(h => h.date === dateStr);
+
+      if (holiday) {
+        const hCard = document.createElement("div");
+        hCard.className = "holiday-card";
+        hCard.innerHTML = `<i class="fa-solid fa-flag mr-2"></i> ${holiday.title}`;
+        list.appendChild(hCard);
+      }
+
+      if (dayEvents.length === 0) {
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "flex flex-col items-center justify-center py-16 opacity-50";
+        emptyDiv.innerHTML = `<i class="fa-solid fa-mug-hot text-2xl mb-2 text-white/30"></i><p class="text-xs font-bold tracking-wider uppercase text-white/40">予定はありません 🍵</p>`;
+        list.appendChild(emptyDiv);
+        return;
+      }
+
+      dayEvents.forEach(ev => {
+        const timeStr = ev.isAllDay ? "終日" : `${formatTime(new Date(ev.start))}`;
+        const durationStr = ev.isAllDay ? "" : getDurationText(ev.start, ev.end);
+        
+        const cardFlag = ev.color === '1' ? 'mama' : ev.color === '10' ? 'papa' : 'common';
+        const borderClass = `border-${cardFlag}`;
+
+        const div = document.createElement("div");
+        div.className = `glass p-event-card-p rounded-card border-l-4 ${borderClass} hover:bg-white/10 active:scale-[0.98] transition-all cursor-pointer flex gap-4 shrink-0`;
+        div.onclick = () => openModal(ev);
+        div.innerHTML = `
+          <div class="w-14 shrink-0 text-right">
+            <div class="text-event-time font-mono font-bold text-white/90 drop-shadow-md mt-0.5">${timeStr}</div>
+            ${durationStr ? `<div class="text-event-sub text-white/50 mt-1">${durationStr}</div>` : ''}
+          </div>
+          <div class="flex-1 min-w-0 border-l border-white/10 pl-4">
+            <div class="text-event-title font-bold text-white truncate mb-1 text-shadow">${ev.title}</div>
+            ${ev.location ? `<div class="text-event-sub text-white/60 truncate tracking-wide"><i class="fa-solid fa-location-dot w-3"></i> ${ev.location}</div>` : ''}
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function renderLogList() {
+      const container = document.getElementById("logList");
+      container.innerHTML = "";
+      if (logsData.length === 0) {
+        container.innerHTML = `<div class="text-center py-16 opacity-50 text-xs font-medium">更新履歴はありません 💜</div>`;
+        return;
+      }
+      logsData.forEach(log => {
+        const date = new Date(log.timestamp);
+        const dateStr = `${date.getMonth()+1}/${date.getDate()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+        
+        const card = document.createElement("div");
+        card.className = "glass p-event-card-p rounded-card border border-white/10 shadow-lg relative overflow-hidden flex flex-col gap-1.5 transition-all shrink-0 hover:bg-white/5";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-log-date font-bold tracking-wider font-mono text-white/40">${dateStr}</span>
+            <div class="flex gap-1.5">
+              <span class="text-log-badge font-bold px-2 py-0.5 rounded-full border border-white/20 bg-white/10 text-white/70"><i class="fa-solid fa-user mr-1"></i>${log.author}</span>
+              <span class="text-log-badge font-bold px-2 py-0.5 rounded-full border bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30">${log.action}</span>
+            </div>
+          </div>
+          <p class="text-log-title font-bold text-white tracking-wide truncate">${log.title}</p>
+          ${log.location ? `<p class="text-event-sub text-white/50 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${log.location}</p>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openLogsModal() {
+      document.getElementById("logBadge").classList.add("hidden");
+      const modal = document.getElementById("logsModal");
+      modal.classList.remove("hidden");
+      setTimeout(() => { modal.classList.remove("modal-enter"); modal.classList.add("modal-active"); }, 10);
+    }
+    function closeLogsModal() {
+      const modal = document.getElementById("logsModal");
+      modal.classList.remove("modal-active"); modal.classList.add("modal-enter");
+      setTimeout(() => { modal.classList.add("hidden"); }, 350);
+    }
+
+    let isActualSwiping = false; 
+    function setupDragSwipe() {
+      const swipeArea = document.getElementById("swipeArea");
+      const slider = document.getElementById("calendarSlider");
+      let startX = 0, startY = 0, currentX = 0, isDragging = false;
+      const moveThreshold = 10, pageChangeThreshold = 90; 
+
+      swipeArea.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+        isDragging = true; isActualSwiping = false; 
+        slider.classList.remove("slider-transition");
+      }, { passive: true });
+
+      swipeArea.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+        const diffX = currentX - startX, diffY = e.touches[0].clientY - startY;
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > moveThreshold) {
+          isActualSwiping = true; slider.style.transform = `translateX(${diffX}px)`;
+        }
+      }, { passive: true });
+
+      swipeArea.addEventListener("touchend", (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        const finalDiffX = currentX - startX;
+        slider.classList.add("slider-transition");
+
+        if (isActualSwiping && Math.abs(finalDiffX) > pageChangeThreshold) {
+          if (finalDiffX > 0) {
+            slider.style.transform = `translateX(100%)`;
+            setTimeout(() => {
+              changeMonth(-1); slider.classList.remove("slider-transition"); slider.style.transform = `translateX(-100%)`;
+              setTimeout(() => { slider.classList.add("slider-transition"); slider.style.transform = `translateX(0)`; }, 20);
+            }, 250);
+          } else {
+            slider.style.transform = `translateX(-100%)`;
+            setTimeout(() => {
+              changeMonth(1); slider.classList.remove("slider-transition"); slider.style.transform = `translateX(100%)`;
+              setTimeout(() => { slider.classList.add("slider-transition"); slider.style.transform = `translateX(0)`; }, 20);
+            }, 250);
+          }
+        } else { slider.style.transform = `translateX(0)`; }
+        setTimeout(() => { isActualSwiping = false; }, 50);
+        startX = 0; currentX = 0;
+      }, { passive: true });
+    }
+
+    function setupAllDayToggle() {
+      const allDayToggle = document.getElementById("eventAllDay");
+      const startInput = document.getElementById("eventStart");
+      const endInput = document.getElementById("eventEnd");
+      allDayToggle.addEventListener('change', (e) => {
+        markDirty();
+        if (e.target.checked) {
+          const currentStart = startInput.value; startInput.type = 'date';
+          if(currentStart) startInput.value = currentStart.split('T')[0];
+          const currentEnd = endInput.value; endInput.type = 'date';
+          if(currentEnd) endInput.value = currentEnd.split('T')[0];
+        } else {
+          const currentStart = startInput.value; startInput.type = 'datetime-local';
+          if(currentStart && currentStart.length <= 10) startInput.value = currentStart + 'T12:00';
+          const currentEnd = endInput.value; endInput.type = 'datetime-local';
+          if(currentEnd && currentEnd.length <= 10) endInput.value = currentEnd + 'T13:00';
+        }
+      });
+    }
+
+    // ★ モーダルのビューモード/編集モードを切り替える関数
+    function setFormState(isViewMode) {
+      const inputs = ['eventTitle', 'eventStart', 'eventEnd', 'eventRecurrence', 'eventAlarm', 'eventLocation', 'eventDescription', 'eventAllDay'];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.disabled = isViewMode;
+      });
+      
+      const sections = document.querySelectorAll('.form-section');
+      sections.forEach(sec => {
+        if (isViewMode) sec.classList.add('opacity-80', 'pointer-events-none');
+        else sec.classList.remove('opacity-80', 'pointer-events-none');
+      });
+
+      // disabled の時に文字が見えなくならないように調整
+      if (!isViewMode) {
+        document.getElementById("eventTitle").classList.remove("text-white/70");
+      } else {
+        document.getElementById("eventTitle").classList.add("text-white/70");
+      }
+
+      if (isViewMode) {
+        document.getElementById("saveEventBtn").classList.add("hidden");
+        document.getElementById("viewActionContainer").classList.remove("hidden");
+      } else {
+        document.getElementById("saveEventBtn").classList.remove("hidden");
+        document.getElementById("viewActionContainer").classList.add("hidden");
+      }
+    }
+
+    function requestEditConfirm() {
+      document.getElementById("editConfirmModal").classList.remove("hidden");
+      document.getElementById("editConfirmModal").classList.add("flex");
+    }
+
+    function closeEditConfirm() {
+      document.getElementById("editConfirmModal").classList.add("hidden");
+      document.getElementById("editConfirmModal").classList.remove("flex");
+    }
+
+    function enterEditMode() {
+      closeEditConfirm();
+      setFormState(false);
+      document.getElementById("modalTitle").textContent = "予定を編集 💜";
+      // 強制的にdirtyフラグを立てておき、そのまま閉じようとしたら破棄確認を出すようにするのもあり
+    }
+
+    function openModal(ev = null) {
+      isDirty = false;
+      
+      const modalElement = document.getElementById("eventModal");
+      modalElement.classList.remove("hidden");
+      setTimeout(() => {
+        modalElement.classList.remove("modal-enter");
+        modalElement.classList.add("modal-active");
+      }, 10);
+      
+      const scrollArea = modalElement.querySelector(".overflow-y-auto");
+      if (scrollArea) scrollArea.scrollTop = 0;
+      
+      const titleEl = document.getElementById("modalTitle");
+
+      if (ev) {
+        // --- 既存の予定を開く場合は「ビューモード（修正不可）」 ---
+        setFormState(true);
+        titleEl.textContent = "予定の詳細 💜";
+        
+        document.getElementById("eventId").value = ev.id;
+        document.getElementById("eventTitle").value = ev.title;
+        document.getElementById("eventLocation").value = ev.location || "";
+        
+        let rawDesc = ev.description || "";
+        let recurrenceVal = "none", alarmVal = "none";
+        
+        const recMatch = rawDesc.match(/\[繰り返し設定: (毎日|毎週|毎月|毎年)\]/);
+        if (recMatch) { const rMap = { "毎日": "daily", "毎週": "weekly", "毎月": "monthly", "毎年": "yearly" }; recurrenceVal = rMap[recMatch[1]] || "none"; }
+        const alarmMatch = rawDesc.match(/\[通知設定: (15分前|30分前|1時間前|1日前)\]/);
+        if (alarmMatch) { const aMap = { "15分前": "m15", "30分前": "m30", "1時間前": "h1", "1日前": "d1" }; alarmVal = aMap[alarmMatch[1]] || "none"; }
+        
+        // ★ 登録者の復元 (見つからなければ「外部からの登録」とみなして貴弘(papa)とする)
+        const authorMatch = rawDesc.match(/\[登録者: (mama|papa)\]/);
+        const resolvedAuthor = authorMatch ? authorMatch[1] : "papa";
+        selectAuthor(resolvedAuthor);
+        
+        // 色IDからフラグを復元
+        const fVal = ev.color === '1' ? 'mama' : ev.color === '10' ? 'papa' : 'common';
+        selectFlag(fVal);
+
+        document.getElementById("eventRecurrence").value = recurrenceVal;
+        document.getElementById("eventAlarm").value = alarmVal;
+        document.getElementById("eventDescription").value = rawDesc.replace(/\[(繰り返し設定|通知設定|登録者): [^\]]+\]/g, "").trim();
+        
+        document.getElementById("eventAllDay").checked = ev.isAllDay;
+        document.getElementById("eventAllDay").dispatchEvent(new Event('change'));
+        isDirty = false;
+        
+        if (ev.isAllDay) {
+           document.getElementById("eventStart").value = formatForInput(new Date(ev.start)).split('T')[0];
+           document.getElementById("eventEnd").value = formatForInput(new Date(ev.end)).split('T')[0];
+        } else {
+           document.getElementById("eventStart").value = formatForInput(new Date(ev.start));
+           document.getElementById("eventEnd").value = formatForInput(new Date(ev.end));
+        }
+
+      } else {
+        // --- 新規作成の場合は「編集モード」 ---
+        setFormState(false);
+        titleEl.textContent = "予定を追加 💜";
+        document.getElementById("eventId").value = "";
+        document.getElementById("eventTitle").value = "";
+        document.getElementById("eventLocation").value = "";
+        document.getElementById("eventDescription").value = "";
+        document.getElementById("eventRecurrence").value = "none";
+        document.getElementById("eventAlarm").value = "none";
+        
+        selectFlag("common");
+        selectAuthor("mama"); // 新規登録時は歩固定
+        
+        document.getElementById("eventAllDay").checked = false;
+        document.getElementById("eventAllDay").dispatchEvent(new Event('change'));
+        isDirty = false;
+
+        const st = new Date(selectedDate); st.setHours(12, 0, 0, 0);
+        const ed = new Date(st); ed.setHours(13, 0, 0, 0);
+        document.getElementById("eventStart").value = formatForInput(st);
+        document.getElementById("eventEnd").value = formatForInput(ed);
+      }
+    }
+
+    function requestCloseModal() {
+      if (isDirty) {
+        document.getElementById("discardConfirmModal").classList.remove("hidden");
+        document.getElementById("discardConfirmModal").classList.add("flex");
+      } else { forceCloseModal(); }
+    }
+    function closeDiscardConfirm() {
+      document.getElementById("discardConfirmModal").classList.add("hidden");
+      document.getElementById("discardConfirmModal").classList.remove("flex");
+    }
+    function forceCloseModal() {
+      isDirty = false; closeDiscardConfirm();
+      document.getElementById("eventModal").classList.remove("modal-active");
+      document.getElementById("eventModal").classList.add("modal-enter");
+      setTimeout(() => { document.getElementById("eventModal").classList.add("hidden"); }, 350);
+    }
+
+    function requestDeleteConfirm() {
+      document.getElementById("deleteConfirmModal").classList.remove("hidden");
+      document.getElementById("deleteConfirmModal").classList.add("flex");
+    }
+    function closeDeleteConfirm() {
+      document.getElementById("deleteConfirmModal").classList.add("hidden");
+      document.getElementById("deleteConfirmModal").classList.remove("flex");
+    }
+
+    async function confirmDeleteEvent() {
+      const id = document.getElementById("eventId").value;
+      if (!id) return;
+      closeDeleteConfirm(); showLoading(true);
+      try {
+        const res = await API.deleteEvent(id);
+        if (res.success) {
+          forceCloseModal(); showToast("予定を削除しました 🗑️");
+          eventsData = eventsData.filter(e => e.id !== id);
+          renderCalendar(); renderEventList(); renderLogList();
+        } else { showToast("削除失敗", true); }
+      } catch(e) { showToast("通信エラー", true); }
+      showLoading(false);
+    }
+
+    function requestCloneConfirm() {
+      document.getElementById("cloneConfirmModal").classList.remove("hidden");
+      document.getElementById("cloneConfirmModal").classList.add("flex");
+    }
+    function closeCloneConfirm() {
+      document.getElementById("cloneConfirmModal").classList.add("hidden");
+      document.getElementById("cloneConfirmModal").classList.remove("flex");
+    }
+
+    async function confirmCloneEvent() {
+      const id = document.getElementById("eventId").value;
+      if (!id) return;
+      closeCloneConfirm(); showLoading(true);
+      try {
+        const res = await API.cloneEvent(id, currentAuthor);
+        if (res.success) {
+          forceCloseModal(); showToast("予定を複製しました 💜");
+          if(!isGAS) {
+            const original = eventsData.find(e => e.id === id);
+            if (original) {
+              const clone = {...original, id: res.eventId, title: original.title + " (複製)"};
+              eventsData.push(clone);
+              logsData.unshift({ id: clone.id, title: clone.title, start: clone.start, location: clone.location, timestamp: new Date().toISOString(), action: '複製', author: currentAuthor === 'papa' ? '貴弘' : '歩' });
+              renderCalendar(); renderEventList(); renderLogList();
+            }
+          } else { loadEvents(); }
+        } else { showToast("複製失敗: " + res.error, true); }
+      } catch(e) { showToast("通信エラー", true); }
+      showLoading(false);
+    }
+
+    async function saveEventForm() {
+      const title = document.getElementById("eventTitle").value;
+      if (!title) { showToast("タイトルを入力してください", true); return; }
+
+      let finalStart = document.getElementById("eventStart").value;
+      let finalEnd = document.getElementById("eventEnd").value;
+      const isAllDay = document.getElementById("eventAllDay").checked;
+
+      if(isAllDay) {
+        if(finalStart.length <= 10) finalStart += 'T00:00';
+        if(finalEnd.length <= 10) finalEnd += 'T23:59';
+      }
+      
+      const startDateObj = new Date(finalStart), endDateObj = new Date(finalEnd), now = new Date();
+      if (startDateObj >= endDateObj) { showToast("終了時間は開始時間より後に設定してください", true); return; }
+
+      const data = {
+        id: document.getElementById("eventId").value,
+        title: title, start: finalStart, end: finalEnd, isAllDay: isAllDay,
+        location: document.getElementById("eventLocation").value,
+        description: document.getElementById("eventDescription").value,
+        recurrence: document.getElementById("eventRecurrence").value,
+        alarm: document.getElementById("eventAlarm").value,
+        flag: currentFlag, author: currentAuthor
+      };
+
+      showLoading(true);
+      try {
+        const res = await API.saveEvent(data);
+        if (res.success) {
+          forceCloseModal(); showToast("カレンダーに保存完了 💜");
+          if(!isGAS) {
+            if(data.id) eventsData = eventsData.filter(e => e.id !== data.id);
+            data.id = res.eventId;
+            data.color = data.flag === 'mama' ? '1' : data.flag === 'papa' ? '10' : '6';
+            eventsData.push(data);
+            logsData.unshift({ id: data.id, title: data.title, start: data.start, location: data.location, timestamp: new Date().toISOString(), action: '追加・更新', author: data.author === 'papa' ? '貴弘' : '歩' });
+            renderCalendar(); renderEventList(); renderLogList();
+          } else { loadEvents(); }
+        } else { showToast("保存に失敗しました", true); }
+      } catch(e) { showToast("通信エラー", true); }
+      showLoading(false);
+    }
+
+    function formatTime(date) { return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`; }
+    function formatForInput(date) { const tzOffset = date.getTimezoneOffset() * 60000; return (new Date(date - tzOffset)).toISOString().slice(0, 16); }
+    function showLoading(show) {
+      const el = document.getElementById("loadingOverlay");
+      if(show) { el.classList.remove("hidden"); el.classList.add("flex"); }
+      else { el.classList.add("hidden"); el.classList.remove("flex"); }
+    }
+    function showToast(msg, isErr = false) {
+      const t = document.getElementById("toast");
+      document.getElementById("toastMsg").textContent = msg;
+      const icon = document.getElementById("toastIcon");
+      if (isErr) {
+        t.style.borderBottom = "1px solid rgba(244, 63, 94, 0.6)"; icon.className = "fa-solid fa-triangle-exclamation text-rose-400";
+      } else {
+        t.style.borderBottom = "1px solid rgba(232, 121, 249, 0.4)"; icon.className = "fa-solid fa-heart text-fuchsia-400 drop-shadow-[0_0_5px_#e879f9]";
+      }
+      t.style.opacity = "1"; t.style.transform = "translateY(0)";
+      setTimeout(() => { t.style.opacity="0"; t.style.transform="translateY(-100%)"; }, 3500);
+    }
+  </script>
+</body>
+</html>
