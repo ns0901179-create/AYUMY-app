@@ -1,125 +1,22 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AYUMY SyncCal Pro 💜</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- ★ Tailwind CSSの設定 ★ -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontSize: {
-            'cal-day': 'var(--font-size-calendar-day)',
-            'app-title': 'var(--font-size-app-title)',
-            'month-title': 'var(--font-size-month-title)',
-            'weekday': 'var(--font-size-weekday)',
-            'event-title': 'var(--font-size-event-title)',
-            'event-time': 'var(--font-size-event-time)',
-            'event-sub': 'var(--font-size-event-sub)',
-            'section-title': 'var(--font-size-section-title)',
-            'small-btn': 'var(--font-size-small-btn)',
-            'modal-title': 'var(--font-size-modal-title)',
-            'modal-label': 'var(--font-size-modal-label)',
-            'modal-input': 'var(--font-size-modal-input)',
-            'log-date': 'var(--font-size-log-date)',
-            'log-badge': 'var(--font-size-log-badge)',
-            'log-title': 'var(--font-size-log-title)',
-          },
-          spacing: {
-            'btn-icon': 'var(--btn-icon-size)',
-            'btn-fab': 'var(--btn-fab-size)',
-            'btn-nav': 'var(--btn-nav-size)',
-            'btn-flag-py': 'var(--btn-flag-py)',
-            'cell': 'var(--cell-size)',
-            'cell-gap-y': 'var(--cell-gap-y)',
-            'cell-gap-x': 'var(--cell-gap-x)',
-            'header-px': 'var(--header-px)',
-            'header-py': 'var(--header-py)',
-            'calendar-p': 'var(--calendar-padding)',
-            'event-card-p': 'var(--event-card-padding)',
-            'modal-sec-p': 'var(--modal-section-padding)',
-            'main-px': 'var(--main-px)',
-          },
-          colors: {
-            'sunday': 'var(--color-sunday)',
-            'saturday': 'var(--color-saturday)',
-          },
-          borderRadius: {
-            'card': 'var(--radius-card)',
-            'modal': 'var(--radius-modal)',
-            'calendar': 'var(--radius-calendar)',
-            'button': 'var(--radius-button)',
-          }
-        }
+<html>
+  <head>
+    <base target="_top">
+    <!-- PWA設定の紐付け -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AYUMY SyncCal">
+    
+    <style>
+      body {
+        padding-top: env(safe-area-inset-top);
+        height: 100vh;
+        margin: 0;
       }
-    }
-  </script>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --logo-size: 55px;
-      --font-size-calendar-day: 14px;
-      --font-size-app-title: 1.25rem;
-      --font-size-month-title: 1rem;
-      --font-size-weekday: 11px;
-      --font-size-event-title: 15px;
-      --font-size-event-time: 12px;
-      --font-size-event-sub: 11px;
-      --font-size-section-title: 14px;
-      --font-size-holiday-card: 13px;
-      --font-size-small-btn: 12px;
-      --font-size-modal-title: 1rem;
-      --font-size-modal-label: 14px;
-      --font-size-modal-input: 14px;
-      --font-size-log-date: 12px;
-      --font-size-log-badge: 10px;
-      --font-size-log-title: 14px;
-
-      --btn-icon-size: 40px;
-      --btn-fab-size: 64px;
-      --btn-nav-size: 36px;
-      --btn-flag-py: 8px;
-
-      --cell-size: 40px;
-      --cell-gap-y: 10px;
-      --cell-gap-x: 4px;
-
-      --header-px: 20px;
-      --header-py: 12px;
-      --calendar-padding: 16px;
-      --event-card-padding: 16px;
-      --holiday-card-padding: 14px;
-      --modal-section-padding: 16px;
-      --main-px: 16px;
-
-      --color-holiday-text: #f43f5e;
-      --color-holiday-bg: rgba(244, 63, 94, 0.12);
-      --color-holiday-border: rgba(244, 63, 94, 0.35);
-      --color-sunday: #f87171;
-      --color-saturday: #22d3ee;
-      --color-today-start: #a855f7;
-      --color-today-end: #ec4899;
-
-      --radius-card: 16px;
-      --radius-modal: 40px;
-      --radius-calendar: 24px;
-      --radius-button: 12px;
-    }
-
-    .profile-image { width: var(--logo-size); height: var(--logo-size); border-radius: 50%; }
-    .holiday-card {
-      font-size: var(--font-size-holiday-card); padding: var(--holiday-card-padding);
-      background: var(--color-holiday-bg); border: 1px solid var(--color-holiday-border);
-      border-radius: var(--radius-card); color: var(--color-holiday-text); font-weight: 700;
-      letter-spacing: 0.1em; text-align: center; margin-bottom: 4px; flex-shrink: 0; pointer-events: none; user-select: none;
-    }
-
+    </style>
+  </head>
     body {
       font-family: 'Noto Sans JP', 'Outfit', sans-serif;
       background: linear-gradient(135deg, #090514 0%, #150b2b 40%, #2a0c5c 80%, #030107 100%);
