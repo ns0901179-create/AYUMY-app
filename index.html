@@ -11,13 +11,10 @@
     overflow: hidden; /* これで余計なスクロールを防ぎます */
     background-color: #000; /* 背景色を黒にしておくと違和感が減ります */
   }
-  iframe {
+iframe {
     width: 100%;
-    height: calc(100% + 100px); /* 100%に100px足すのがコツです */
-    border: none;
-    position: absolute;
-    top: -50px; /* バナーの高さ分だけ上にずらす */
-    left: 0;
+    height: 100vh; /* 画面の高さぴったりにする */
+    margin-top: -50px; /* バナーを隠す分だけ上にずらす */
   }
 </style>
     <link rel="apple-touch-icon" href="icon.png">  
